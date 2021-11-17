@@ -7,11 +7,13 @@ const AuthController = require('../controllers/AuthController')
 const {
     register,
     login,
-    profile
+    profile,
+    loginWithMobile
 } = new AuthController()
 
 router.post('/register', register)
 router.post('/login', login)
+router.post('/loginWithMobile', loginWithMobile)
 router.get('/profile', auth, profile)
 
 module.exports = router;

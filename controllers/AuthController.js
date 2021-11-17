@@ -36,12 +36,34 @@ class AuthController {
     profile = async (req, res, next) => {
         try {
             const user = await User.findById(req.user._id).select("-password -__v");
+            if (!user) return res.status(404).send({ error: true, msg: "Profile not Found" })
             res.send(user);
         } catch (error) {
             console.log(error);
             res.send("An error occured");
         }
     }
+
+    loginWithMobile = async (req, res, next) => {
+        try {
+            const user = await User.findOne({ mobile: req.body.mobile });
+            if (!user) return res.status(400).send({ error: true, msg: "Invalid mobile or password"});
+
+            const validPassword = await bcrypt.compare(
+                req.body.password,
+                user.password
+            );
+            if (!validPassword)
+                return res.status(400).send({ error: true, msg: "Invalid mobile or password"});
+
+            const token = user.generateAuthToken();
+            res.send(token);
+        } catch (error) {
+            console.log(error);
+            res.send("An error occured");
+        }
+    }
+
 }
 
 module.exports = AuthController;
