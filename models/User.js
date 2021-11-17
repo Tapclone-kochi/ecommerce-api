@@ -11,9 +11,23 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
+    mobile: {
+        type: String,
+        required: true,
+    },
     password: {
         type: String,
         required: true,
+    },
+    user_type: {
+        type: String,
+        required: true,
+        default: 'user'
+    },
+    status: {
+        type: String,
+        required: true,
+        default: 'active'
     },
     created_at: {
         type: Date,
@@ -25,7 +39,14 @@ const userSchema = new Schema({
         required: true,
         default: new Date()
     },
-});
+    verified: {
+        type: Boolean,
+        required: true,
+        default: false
+    }
+},
+{ timestamps: true }
+);
 
 userSchema.methods.generateAuthToken = function () {
     var tokens = {};
