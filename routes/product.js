@@ -11,7 +11,8 @@ const {
     getProductsByCategoryID,
     disableProduct,
     updateProductStocks,
-    getProduct
+    getProduct,
+    getProducts
 } = new ProductController();
 
 router.post('/add', auth, addProduct)
@@ -21,4 +22,6 @@ router.get('/list/:id', getProductsByCategoryID)
 router.patch('/changeStatus/:id/:action', auth, disableProduct)
 router.patch('/updateStock/:id', auth, updateProductStocks)
 router.get('/view/:id', getProduct)
+router.get('/list', auth, getProducts)
+
 module.exports = router;

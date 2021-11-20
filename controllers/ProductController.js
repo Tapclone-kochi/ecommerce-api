@@ -13,7 +13,7 @@ class ProductController {
 
     getProductsByCategoryID = async (req, res) => {
         try {
-            const products = await Product.find({ category_id: req.params.id }).select('-__v')
+            const products = await Product.find({ category_id: req.params.id }).select('-__v').populate('category_id')
             res.send({ error: false, items: products })
         } catch (error) {
             res.send({ error: false, msg: error.message })
@@ -90,6 +90,15 @@ class ProductController {
             res.send({ error: false, product: product })
         } catch (error) {
             res.send({ error: false, msg: error.message })  
+        }
+    }
+
+    getProducts = async (req, res) => {
+        try {
+            const products = await Product.find().select('-__v').populate('category_id')
+            res.send({ error: false, items: products })
+        } catch (error) {
+            res.send({ error: false, msg: error.message })
         }
     }
 }
