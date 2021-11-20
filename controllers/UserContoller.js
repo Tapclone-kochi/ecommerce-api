@@ -26,6 +26,19 @@ class UserController {
             res.send({ error: false, msg: "An Error Occured" })
         }
     }
+
+    getUserProfile = async (req, res) => {
+        try {
+            const user = await User.findOne({ _id: req.params.id, user_type: 'user' }).select('-password -__v').lean()
+            if (!user) {
+                res.status(404).send({ error: true, msg: "User not Found" })
+                return
+            }
+            res.send({ error: false, user: user })
+        } catch (error) {
+            res.send({ error: false, msg: error.message })
+        }
+    }
 }
 
 module.exports = UserController;
