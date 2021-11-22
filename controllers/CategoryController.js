@@ -1,4 +1,5 @@
 const Category = require('../models/Category')
+const Product = require('../models/Product')
 
 class CategoryController {
     addCategory = async (req, res) => {
@@ -24,6 +25,7 @@ class CategoryController {
     deleteCategory = async (req, res) => {
         try {
             await Category.deleteOne({ _id: req.params.id })
+            await Product.deleteMany({ category_id: req.params.id})
             res.send({ error: false, msg: "Category Deleted!!" })
         } catch (error) {
             res.send({ error: true, msg: "An Error Occured" })

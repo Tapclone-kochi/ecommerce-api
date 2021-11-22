@@ -81,7 +81,7 @@ class ProductController {
 
     getProduct = async (req, res) => {
         try {
-            const product = await Product.findOne({ _id: req.params.id }).select('-__v')
+            const product = await Product.findOne({ _id: req.params.id }).select('-__v').populate('category_id')
             if (!product) {
                 res.status(404).send({ error: true, msg: "Product not Found" })
                 return
