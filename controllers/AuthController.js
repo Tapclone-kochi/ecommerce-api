@@ -54,7 +54,7 @@ class AuthController {
                 user.password
             );
             if (!validPassword)
-                return res.status(400).send({ error: true, msg: "Invalid mobile or password"});
+                return res.status(400).send({ error: true, msg: "Invalid password"});
 
             const token = user.generateAuthToken();
             res.send(token);
