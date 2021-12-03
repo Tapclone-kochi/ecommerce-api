@@ -1,13 +1,25 @@
 const Product = require('../models/Product')
+const s3Helpers = require('../helpers/s3')
 
 class ProductController {
     addProduct = async (req, res) => {
+        let files = []
+        req.files.forEach(file => {
+            files.push(file)
+        });
+        const data = {
+            name: req.body.name,
+            price: req.body.price,
+            description: req.body.description,
+            category_id: req.body.category_id,
+            images: files
+        }
         try {
-            const product = new Product(req.body)
+            const product = new Product(data)
             await product.save()
             res.send({ error: false, msg: "Product Created" })
         } catch (error) {
-            res.send({ error: false, msg: error.message })
+            res.send({ error: true, msg: error.message })
         }
     }
 
@@ -16,7 +28,7 @@ class ProductController {
             const products = await Product.find({ category_id: req.params.id }).select('-__v').populate('category_id')
             res.send({ error: false, items: products })
         } catch (error) {
-            res.send({ error: false, msg: error.message })
+            res.send({ error: true, msg: error.message })
         }
     }
 
@@ -25,7 +37,7 @@ class ProductController {
             await Product.deleteOne({ _id: req.params.id })
             res.send({ error: false, msg: "Product Deleted" })
         } catch (error) {
-            res.send({ error: false, msg: error.message })
+            res.send({ error: true, msg: error.message })
         }
     }
 
@@ -43,7 +55,7 @@ class ProductController {
             }
             res.send({ error: false, msg: "Product Updated" })
         } catch (error) {
-            res.send({ error: false, msg: error.message })
+            res.send({ error: true, msg: error.message })
         }
     }
 
@@ -59,7 +71,7 @@ class ProductController {
             }
             res.send({ error: false, msg: "Product Stocks Updated" })
         } catch (error) {
-            res.send({ error: false, msg: error.message })
+            res.send({ error: true, msg: error.message })
         }
     }
 
@@ -75,7 +87,7 @@ class ProductController {
             }
             res.send({ error: false, msg: "Product " + (req.params.action === 'disable' ? "Disabled" : "Enabled") })
         } catch (error) {
-            res.send({ error: false, msg: error.message })
+            res.send({ error: true, msg: error.message })
         }
     }
 
@@ -89,7 +101,7 @@ class ProductController {
 
             res.send({ error: false, product: product })
         } catch (error) {
-            res.send({ error: false, msg: error.message })  
+            res.send({ error: true, msg: error.message })  
         }
     }
 
@@ -98,7 +110,20 @@ class ProductController {
             const products = await Product.find().select('-__v').populate('category_id')
             res.send({ error: false, items: products })
         } catch (error) {
-            res.send({ error: false, msg: error.message })
+            res.send({ error: true, msg: error.message })
+        }
+    }
+
+    deleteProductImage = async(req, res) => {
+        try {
+            let result = await s3Helpers.deleteS3Object(req.params.key)
+            console.log(result);
+            if(result)
+                res.send({ error: false, msg: 'Deleted Successfully' })
+            else
+                res.send({ error: true, msg: 'An error Occured' })
+        } catch (error) {
+            res.send({ error: true, msg: error.message })
         }
     }
 }

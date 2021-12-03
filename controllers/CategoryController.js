@@ -44,6 +44,15 @@ class CategoryController {
             res.send({ error: true, msg: "An Error Occured" })
         }
     }
+
+    getCategory = async (req, res) => {
+        try {
+            const category = await Category.findById(req.params.id)
+            res.send({ error: false, category: category })
+        } catch (error) {
+            res.send({ error: true, msg: "An Error Occured" })
+        }
+    }
 }
 
 module.exports = CategoryController;
