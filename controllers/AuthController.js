@@ -4,13 +4,18 @@ const User = require('../models/User');
 
 class AuthController {
     register = async (req, res, next) => {
-        const user = new User(req.body);
+        try {
+            const user = new User(req.body);
 
-        const salt = await bcrypt.genSalt(Number(process.env.SALT));
-        user.password = await bcrypt.hash(user.password, salt);
-        await user.save();
-
-        res.send({ error: false, msg: "User Created!!"});
+            const salt = await bcrypt.genSalt(Number(process.env.SALT));
+            user.password = await bcrypt.hash(user.password, salt);
+            await user.save();
+    
+            res.send({ error: false, msg: "User Created!!"});    
+        } catch (error) {
+            console.error(error);
+            res.send({ error: true, msg: "Could not create user"});    
+        }
     }
 
     login = async (req, res, next) => {
