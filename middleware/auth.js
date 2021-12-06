@@ -10,6 +10,6 @@ module.exports = (req, res, next) => {
         next();
     } catch (error) {
         console.error(error);
-        res.status(400).send({ error: true, msg: "Invalid token" });
+        res.status(400).send({ error: true, msg: "User logged out, login again" });
     }
 };

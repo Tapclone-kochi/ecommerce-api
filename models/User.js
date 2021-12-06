@@ -9,11 +9,14 @@ const userSchema = new Schema({
     },
     email: {
         type: String,
-        required: true,
+        unique: true,
+        index: true
     },
     mobile: {
         type: String,
         required: true,
+        unique: true,
+        index: true
     },
     password: {
         type: String,
@@ -29,23 +32,18 @@ const userSchema = new Schema({
         required: true,
         default: 'active'
     },
-    created_at: {
-        type: Date,
-        required: true,
-        default: new Date()
-    },
-    updated_at: {
-        type: Date,
-        required: true,
-        default: new Date()
-    },
     verified: {
         type: Boolean,
         required: true,
         default: false
     },
-    addresses: {
-        type: Array
+    address: {
+        type: String,
+        required: true
+    },
+    pin: {
+        type: String,
+        required: true
     }
 },
 { timestamps: true }
@@ -54,7 +52,7 @@ const userSchema = new Schema({
 userSchema.methods.generateAuthToken = function () {
     var tokens = {};
 
-    tokens.accessToken = jwt.sign({ _id: this._id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
+    tokens.accessToken = jwt.sign({ _id: this._id }, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
     tokens.refreshToken = jwt.sign({ _id: this._id }, process.env.JWT_SECRET_KEY, { expiresIn: '6h' });
     return tokens;
 };
