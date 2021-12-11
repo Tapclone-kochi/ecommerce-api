@@ -1,6 +1,8 @@
 const Order = require('../models/Order')
 const Cart = require('../models/Cart')
 const Shipping = require('../models/Shipping')
+const Product = require('../models/Product')
+
 const Razorpay = require('razorpay');
 
 class OrderController {
@@ -88,6 +90,14 @@ class OrderController {
       order.markModified('status')
 
       await order.save()
+
+      for (let index = 0; index < order.items.length; index++) {
+        const el = order.items[index];
+        let product = await Product.findById(el.productID)
+        product.stockLeft = product.stockLeft - el.quantity
+        await product.save()
+      }
+
       res.send({ error: false, msg: "Payment Verified" })
     } catch (error) {
       console.error(error);

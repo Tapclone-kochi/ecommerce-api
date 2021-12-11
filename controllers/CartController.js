@@ -1,12 +1,27 @@
 const Cart = require('../models/Cart')
+const Product = require('../models/Product')
+
 const mongoose = require("mongoose");
 
 class CartController {
   addItemInCart = async (req, res) => {
     try {
       let cart = await Cart.findOne({ userID: req.user._id })
+      let product = await Product.findById(req.body.productID)
+
+      if(product.stockLeft < 1) {
+        res.send({ error: true, msg: "Out of Stock!!" })
+        return
+      }
+
+      if(product.stockLeft < req.body.quantity) {
+        res.send({ error: true, msg: "Required Stock is unavailable" })
+        return
+      }
+
       if(!cart) {
         let products = []
+
         products.push(req.body)
         cart = new Cart({ userID: req.user._id, products: products })
         await cart.save()
@@ -74,9 +89,9 @@ class CartController {
   updateCartProductQuantity = async (req, res) => {
     try {
       let newQuantity = req.body.data
-      console.log(newQuantity);
+
       let cart = await Cart.findOne({ userID: req.user._id })
-      console.log(cart);
+
       cart.products.forEach((el, index) => {
         cart.products[index].quantity = newQuantity[index]
       });
@@ -99,7 +114,6 @@ class CartController {
       let products = cart.products
       let totalAmount = 0
       products.forEach(el => {
-        console.log(el);
         totalAmount += el.productID.price * el.quantity
       });
       res.send({ error: false, totalAmount: totalAmount })
