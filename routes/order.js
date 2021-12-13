@@ -8,12 +8,16 @@ const {
   createOrder,
   confirmOrder,
   getOrders,
-  getOrder
+  getOrder,
+  getOrdersForAdmin,
+  dispatchOrder
 } = new OrderController()
 
 router.post('/create', auth, createOrder);
 router.post('/confirm', confirmOrder);
 router.get('/list', auth, getOrders);
 router.get('/detail/:id', auth, getOrder);
+router.get('/list-for-admin', auth, getOrdersForAdmin)
+router.patch('/dispatch', auth, dispatchOrder)
 
 module.exports = router;

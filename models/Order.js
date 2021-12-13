@@ -16,7 +16,7 @@ const productSchema = new Schema({
 const orderSchema = new Schema({
   userID: {
     type: Schema.Types.ObjectId,
-    ref: 'users',
+    ref: 'user',
     required: true
   },
   orderID: {
@@ -42,6 +42,9 @@ const orderSchema = new Schema({
     default: 'payment_pending',
     required: true
   },
+  trackingNo: {
+    type: String
+  }
 },
 { timestamps: true }
 )

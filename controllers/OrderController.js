@@ -132,6 +132,31 @@ class OrderController {
       res.send({ error: true, msg: "An Error Occured" })
     }
   }
+
+  getOrdersForAdmin = async (req, res) => {
+    try {
+      const orders = await Order.find().populate('userID', 'name mobile pin')
+      res.send({ error: false, orders: orders })
+    } catch (error) {
+      console.error(error);
+      res.send({ error: true, msg: "An Error Occured" })
+    }
+  }
+
+  dispatchOrder = async (req, res) => {
+    try {
+      let order = await Order.findById(req.body.id)
+      order.status = 'order_dispatched'
+      order.trackingNo = req.body.trackingNo
+      order.markModified('status')
+      order.markModified('trackingNo')
+      await order.save()
+      res.send({ error: false, msg: "Order Status changed to dispatched"})
+    } catch (error) {
+      console.error(error);
+      res.send({ error: true, msg: "An Error Occured" })
+    }
+  }
 }
 
 module.exports = OrderController;

@@ -8,6 +8,7 @@ const productRoute = require('./product');
 const cartRoute = require('./cart')
 const shippingRoute = require('./shipping')
 const orderRoute = require('./order')
+const commonRouter = require('./common')
 
 router.use('/auth', authRoute);
 router.use('/user', userRoute);
@@ -17,5 +18,6 @@ router.use('/product', productRoute);
 router.use('/cart', cartRoute);
 router.use('/shipping', shippingRoute);
 router.use('/order', orderRoute);
+router.use('/common', commonRouter);
 
 module.exports = router;
