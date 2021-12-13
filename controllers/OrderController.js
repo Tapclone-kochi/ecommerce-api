@@ -123,6 +123,7 @@ class OrderController {
           path: 'productID'
         }
       })
+      .populate('userID')
       if(! order) {
         res.send({ error: true, msg: "Order Not Found" })
         return

@@ -69,6 +69,26 @@ class AuthController {
         }
     }
 
+    adminLogin = async (req, res) => {
+        try {
+            const user = await User.findOne({ email: req.body.email, user_type: 'admin' });
+            if (!user) return res.status(400).send({ error: true, msg: "Invalid mobile or password"});
+
+            const validPassword = await bcrypt.compare(
+                req.body.password,
+                user.password
+            );
+            if (!validPassword)
+                return res.status(400).send({ error: true, msg: "Invalid password"});
+
+            const token = user.generateAuthToken();
+            res.send(token);
+        } catch (error) {
+            console.log(error);
+            res.send("An error occured");
+        }
+    }
+
 }
 
 module.exports = AuthController;

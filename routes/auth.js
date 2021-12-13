@@ -8,12 +8,14 @@ const {
     register,
     login,
     profile,
-    loginWithMobile
+    loginWithMobile,
+    adminLogin
 } = new AuthController()
 
 router.post('/register', register)
 router.post('/login', login)
 router.post('/loginWithMobile', loginWithMobile)
 router.get('/profile', auth, profile)
+router.post('/admin-login', adminLogin)
 
 module.exports = router;
