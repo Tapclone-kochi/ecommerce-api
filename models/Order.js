@@ -28,7 +28,7 @@ const orderSchema = new Schema({
     type: String,
     required: true
   },
-  shippingMethod: {
+  delivery_partner_name: {
     type: String,
     required: true
   },
