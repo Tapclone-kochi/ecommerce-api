@@ -44,6 +44,10 @@ const userSchema = new Schema({
     pin: {
         type: String,
         required: true
+    },
+    state: {
+        type: String,
+        required: true
     }
 },
 { timestamps: true }
