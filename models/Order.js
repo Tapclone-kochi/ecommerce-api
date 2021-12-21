@@ -44,6 +44,20 @@ const orderSchema = new Schema({
   },
   trackingNo: {
     type: String
+  },
+  address: {
+    fullAddress: {
+      type: String,
+      required: true
+    },
+    state: {
+      type: String,
+      required: true
+    },
+    pin: {
+      type: String,
+      required: true
+    }
   }
 },
 { timestamps: true }

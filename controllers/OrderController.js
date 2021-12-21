@@ -21,7 +21,7 @@ class OrderController {
         return;
       }
 
-      const user = await User.findById(req.user._id).select("state");
+      const user = await User.findById(req.user._id).select("state pin address");
       let data = await Shipping.findOne({
         state_name: user.state,
         delivery_partner_name: req.body.delivery_partner_name,
@@ -34,7 +34,7 @@ class OrderController {
       function countFunction(item) {
         count = count + item.quantity;
       }
-      if (count - 1 > 1) {
+      if (count - 1 >= 1) {
         if (data.state_name === "Kerala") {
           data.price = data.price + (count - 1) * 30;
           shippingPrice = data.price;
@@ -77,6 +77,11 @@ class OrderController {
         items: products,
         userID: req.user._id,
         orderID: razorpayOrder.id,
+        address: {
+          fullAddress: user.address,
+          pin: user.pin,
+          state: user.state
+        }
       });
 
       await newOrder.save();
@@ -92,7 +97,7 @@ class OrderController {
       });
     } catch (error) {
       console.error(error);
-      res.send({ error: true, msg: "An Error Occured" });
+      res.send({ error: true, msg: "An Error Occured during Payment" });
     }
   };
 

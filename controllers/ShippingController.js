@@ -6,10 +6,10 @@ class ShippingController {
   getShippingInfo = async (req, res) => {
     try {
       const user = await User.findById(req.user._id).select("state");
-      let data = await Shipping.findOne({
+      let data = await Shipping.find({
         state_name: user.state,
-        delivery_partner_name: req.body.delivery_partner_name,
       });
+
       let productCount = await Cart.findOne({ userID: req.user._id });
 
       let count = 0;
@@ -17,17 +17,20 @@ class ShippingController {
       productCount.products.forEach(countFunction);
       function countFunction(item) {
         count = count + item.quantity;
+        // console.log(item.quantity);
       }
-      if (count - 1 > 1) {
-        if (data.state_name === "Kerala") {
-          data.price = data.price + (count - 1) * 30;
-        } else {
-          data.price = data.price + (count - 1) * 50;
-        }
-        res.send({ error: false, data: data });
-      } else {
-        res.send({ error: false, data: data });
-      }
+      console.log(count);
+      data.forEach((el, index) => {
+        if (count - 1 >= 1) {
+          if (el.state_name === "Kerala") {
+            data[index].price = el.price + (count - 1) * 30;
+          } else {
+            data[index].price = el.price + (count - 1) * 50;
+          }
+        }  
+      });
+
+      res.send({ error: false, data: data });
     } catch (error) {
       console.error(error);
       res.send({ error: true, msg: "An Error Occured" });
