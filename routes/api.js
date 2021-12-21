@@ -10,9 +10,6 @@ const shippingRoute = require('./shipping')
 const orderRoute = require('./order')
 const commonRouter = require('./common')
 
-router.use('/', (req, res) => {
-  res.json({ status: 'OK' })
-})
 router.use('/auth', authRoute);
 router.use('/user', userRoute);
 router.use('/category', categoryRoute);
