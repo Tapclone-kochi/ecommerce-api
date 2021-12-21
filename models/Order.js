@@ -28,7 +28,7 @@ const orderSchema = new Schema({
     type: String,
     required: true
   },
-  shippingMethod: {
+  delivery_partner_name: {
     type: String,
     required: true
   },
@@ -44,6 +44,28 @@ const orderSchema = new Schema({
   },
   trackingNo: {
     type: String
+  },
+  user_details: {
+    name: {
+      type: String,
+      required: true
+    },
+    mobile: {
+      type: String,
+      required: true
+    },
+    address: {
+      type: String,
+      required: true
+    },
+    state: {
+      type: String,
+      required: true
+    },
+    pin: {
+      type: String,
+      required: true
+    }
   }
 },
 { timestamps: true }

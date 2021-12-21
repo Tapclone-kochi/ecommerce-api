@@ -2,15 +2,15 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const shippingSchema = new Schema({
-  display_name: {
-    type: String,
-    required: true
-  },
   price: {
     type: Number,
     required: true,
   },
-  short_name: {
+  state_name: {
+    type: String,
+    required: true
+  },
+  delivery_partner_name:{
     type: String,
     required: true
   }
