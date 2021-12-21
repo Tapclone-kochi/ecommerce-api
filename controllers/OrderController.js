@@ -21,7 +21,7 @@ class OrderController {
         return;
       }
 
-      const user = await User.findById(req.user._id).select("state pin address");
+      const user = await User.findById(req.user._id).select("name mobile state pin address");
       let data = await Shipping.findOne({
         state_name: user.state,
         delivery_partner_name: req.body.delivery_partner_name,
@@ -77,8 +77,10 @@ class OrderController {
         items: products,
         userID: req.user._id,
         orderID: razorpayOrder.id,
-        address: {
-          fullAddress: user.address,
+        user_details: {
+          name: user.name,
+          mobile: user.mobile,
+          address: user.address,
           pin: user.pin,
           state: user.state
         }
@@ -154,7 +156,6 @@ class OrderController {
             path: "productID",
           },
         })
-        .populate("userID");
       if (!order) {
         res.send({ error: true, msg: "Order Not Found" });
         return;
@@ -167,7 +168,7 @@ class OrderController {
 
   getOrdersForAdmin = async (req, res) => {
     try {
-      const orders = await Order.find().populate("userID", "name mobile pin");
+      const orders = await Order.find();
       res.send({ error: false, orders: orders });
     } catch (error) {
       console.error(error);
