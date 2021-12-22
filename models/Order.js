@@ -66,6 +66,10 @@ const orderSchema = new Schema({
       type: String,
       required: true
     }
+  },
+  order_unique: {
+    type: String, 
+    required: true
   }
 },
 { timestamps: true }

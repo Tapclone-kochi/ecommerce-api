@@ -4,6 +4,7 @@ const Shipping = require("../models/Shipping");
 const Product = require("../models/Product");
 const User = require("../models/User");
 const Razorpay = require("razorpay");
+const ShortUniqueId = require('short-unique-id');
 
 class OrderController {
   createOrder = async (req, res) => {
@@ -70,6 +71,8 @@ class OrderController {
         receipt: "Receipt #" + req.user._id,
       });
 
+      const uid = new ShortUniqueId({ length: 6 })
+
       let newOrder = new Order({
         paymentMethod: req.body.paymentMethod,
         delivery_partner_name: req.body.delivery_partner_name,
@@ -83,7 +86,8 @@ class OrderController {
           address: user.address,
           pin: user.pin,
           state: user.state
-        }
+        },
+        order_unique: uid()
       });
 
       await newOrder.save();
