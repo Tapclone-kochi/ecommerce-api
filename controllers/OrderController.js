@@ -5,7 +5,7 @@ const Product = require("../models/Product");
 const User = require("../models/User");
 const Razorpay = require("razorpay");
 const ShortUniqueId = require('short-unique-id');
-
+const sms = require('../helpers/sms')
 class OrderController {
   createOrder = async (req, res) => {
     try {
@@ -183,11 +183,19 @@ class OrderController {
   dispatchOrder = async (req, res) => {
     try {
       let order = await Order.findById(req.body.id);
+      if(!order) {
+        res.send({ error: true, msg: "Order not found" });
+        return
+      }
       order.status = "order_dispatched";
       order.trackingNo = req.body.trackingNo;
       order.markModified("status");
       order.markModified("trackingNo");
       await order.save();
+
+      let user = await User.findById(order.userID)
+      sms.sendDispatchSMS(user.mobile, order.trackingNo, order.delivery_partner_name, order.order_unique)
+      
       res.send({ error: false, msg: "Order Status changed to dispatched" });
     } catch (error) {
       console.error(error);
