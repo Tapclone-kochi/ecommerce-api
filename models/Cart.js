@@ -6,7 +6,6 @@ const productSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'products',
     required: true,
-    unique: true
   },
   quantity: {
     type: Number,
@@ -18,8 +17,7 @@ const cartSchema = new Schema({
   userID: {
     type: Schema.Types.ObjectId,
     ref: 'users',
-    required: true,
-    unique: true
+    // unique: true
   },
   products: [productSchema]
 },

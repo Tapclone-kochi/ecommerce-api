@@ -5,8 +5,19 @@ const mongoose = require("mongoose");
 
 class CartController {
   addItemInCart = async (req, res) => {
+    let searchQuery = {}
+    if(req.user) {
+      searchQuery = {
+        userID: req.user._id
+      }
+    } else if(req.body.cartID) {
+      searchQuery = {
+        _id: req.body.cartID
+      }
+    }
+
     try {
-      let cart = await Cart.findOne({ userID: req.user._id })
+      let cart = await Cart.findOne(searchQuery)
       let product = await Product.findById(req.body.productID)
 
       if(product.stockLeft < 1) {
@@ -23,10 +34,10 @@ class CartController {
         let products = []
 
         products.push(req.body)
-        cart = new Cart({ userID: req.user._id, products: products })
+        cart = new Cart({ userID: req.user?req.user._id:null, products: products })
         await cart.save()
-        
-        res.send({ error: false, msg: "Successfully added to cart" })
+
+        res.send({ error: false, msg: "Successfully added to cart", cartID: cart._id })
         return
       } else { 
         let product = cart.products.find(item => item.productID.equals(mongoose.Types.ObjectId(req.body.productID)))
@@ -40,7 +51,7 @@ class CartController {
         cart.markModified('products')
         await cart.save()
         
-        res.send({ error: false, msg: "Successfully added to cart" })
+        res.send({ error: false, msg: "Successfully added to cart", cartID: cart._id })
       }
     } catch (error) {
       console.error(error);
@@ -49,8 +60,18 @@ class CartController {
   }
 
   deleteItemInCart = async (req, res) => {
+    let query = {}
+    if(req.user) {
+      query = {
+        userID: req.user._id
+      }
+    } else {
+      query = {
+        _id: req.body.cartID
+      }
+    }
     try {
-      let cart = await Cart.findOne({ userID: req.user._id })
+      let cart = await Cart.findOne(query)
       await cart.products.pull({ _id: req.params.id })
       await cart.save()
 
@@ -61,8 +82,21 @@ class CartController {
   }
 
   getCart = async (req, res) => {
+    let query = {}
+    if(req.user) {
+      query = {
+        userID: req.user._id
+      }
+    } else if(req.query.cartID) {
+      query = {
+        _id: req.query.cartID
+      }
+    } else {
+      res.send({ error: true, msg: "An Error Occured" })
+      return
+    }
     try {
-      let cart = await Cart.findOne({ userID: req.user._id }).populate({
+      let cart = await Cart.findOne(query).populate({
         path: 'products',
         populate: {
           path: 'productID'
@@ -70,13 +104,27 @@ class CartController {
       })
       res.send({ error: false, cart: cart })
     } catch (error) {
+      console.error(error);
       res.send({ error: true, msg: "An Error Occured" })
     }
   }
 
   clearCart = async (req, res) => {
+    let query = {}
+    if(req.user) {
+      query = {
+        userID: req.user._id
+      }
+    } else if(req.query.cartID) {
+      query = {
+        _id: req.query.cartID
+      }
+    } else {
+      res.send({ error: true, msg: "An Error Occured" })
+      return
+    }
     try {
-      let cart = await Cart.findOne({ userID: req.user._id })
+      let cart = await Cart.findOne(query)
       cart.products = []
       cart.markModified('products')
       await cart.save()
