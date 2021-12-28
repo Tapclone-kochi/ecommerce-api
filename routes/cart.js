@@ -1,6 +1,7 @@
 const router = require('express').Router();
 
 const auth = require('../middleware/auth')
+const guestAuth = require('../middleware/guest-auth')
 
 const CartController = require('../controllers/CartController')
 
@@ -10,14 +11,16 @@ const {
   getCart,
   clearCart,
   updateCartProductQuantity,
-  getCartTotalAmount
+  getCartTotalAmount,
+  assignUserToCart,
 } = new CartController()
 
-router.post('/add', addItemInCart);
-router.delete('/remove/:id', deleteItemInCart)
-router.get('/get', getCart)
-router.delete('/clear', clearCart)
-router.post('/update-quantity', updateCartProductQuantity)
-router.get('/get-amount', getCartTotalAmount)
+router.post('/add', guestAuth, addItemInCart);
+router.delete('/remove/:id', guestAuth, deleteItemInCart)
+router.get('/get', guestAuth, getCart)
+router.delete('/clear', guestAuth, clearCart)
+router.post('/update-quantity', guestAuth, updateCartProductQuantity)
+router.get('/get-amount', guestAuth, getCartTotalAmount)
+router.post('/assign-to-cart', auth, assignUserToCart)
 
 module.exports = router;
