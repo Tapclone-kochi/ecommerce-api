@@ -6,6 +6,7 @@ const User = require("../models/User");
 const Razorpay = require("razorpay");
 const ShortUniqueId = require('short-unique-id');
 const sms = require('../helpers/sms')
+const telegram = require('../helpers/telegram')
 class OrderController {
   createOrder = async (req, res) => {
     try {
@@ -134,6 +135,8 @@ class OrderController {
         await product.save();
       }
 
+      telegram.sendOrderPlacedToAdmin()
+      
       res.send({ error: false, msg: "Payment Verified" });
     } catch (error) {
       console.error(error);
@@ -171,8 +174,17 @@ class OrderController {
   };
 
   getOrdersForAdmin = async (req, res) => {
+    const {
+      status,
+      orderID
+    } = req.query
+
+    const query = {
+      ...(status !== undefined && status !== "" && { status }),
+      ...(orderID !== undefined && orderID !== "" && { order_unique: orderID })
+    }
     try {
-      const orders = await Order.find();
+      const orders = await Order.find(query).sort({ createdAt: -1 });
       res.send({ error: false, orders: orders });
     } catch (error) {
       console.error(error);
