@@ -17,7 +17,7 @@ class CartController {
     }
 
     try {
-      let cart = {}
+      let cart = null
       if(Object.keys(searchQuery).length)
         cart = await Cart.findOne(searchQuery)
       let product = await Product.findById(req.body.productID)
@@ -31,8 +31,8 @@ class CartController {
         res.send({ error: true, msg: "Required Stock is unavailable" })
         return
       }
-
-      if(!Object.keys(cart).length) {
+      
+      if(!cart) {
         let products = []
 
         products.push(req.body)
