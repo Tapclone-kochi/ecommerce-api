@@ -12,7 +12,8 @@ class ProductController {
             price: req.body.price,
             description: req.body.description,
             category_id: req.body.category_id,
-            images: files
+            images: files,
+            stockLeft: req.body.stockLeft
         }
         try {
             const product = new Product(data)

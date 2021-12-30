@@ -135,7 +135,7 @@ class OrderController {
         await product.save();
       }
 
-      telegram.sendOrderPlacedToAdmin()
+      telegram.sendOrderPlacedToAdmin(order.order_unique)
       
       res.send({ error: false, msg: "Payment Verified" });
     } catch (error) {

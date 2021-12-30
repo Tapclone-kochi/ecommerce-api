@@ -56,8 +56,8 @@ const userSchema = new Schema({
 userSchema.methods.generateAuthToken = function () {
     var tokens = {};
 
-    tokens.accessToken = jwt.sign({ _id: this._id }, process.env.JWT_SECRET_KEY, { expiresIn: '6h' });
-    tokens.refreshToken = jwt.sign({ _id: this._id }, process.env.JWT_SECRET_KEY, { expiresIn: '12h' });
+    tokens.accessToken = jwt.sign({ _id: this._id }, process.env.JWT_SECRET_KEY, { expiresIn: '7d' });
+    tokens.refreshToken = jwt.sign({ _id: this._id }, process.env.JWT_SECRET_KEY, { expiresIn: '14d' });
     return tokens;
 };
 
