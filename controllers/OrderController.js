@@ -201,8 +201,11 @@ class OrderController {
       }
       order.status = "order_dispatched";
       order.trackingNo = req.body.trackingNo;
+      order.delivery_partner_name = req.body.delivery_partner_name
       order.markModified("status");
       order.markModified("trackingNo");
+      order.markModified("delivery_partner_name")
+      
       await order.save();
 
       let user = await User.findById(order.userID)
