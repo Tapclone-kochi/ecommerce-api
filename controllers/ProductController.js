@@ -127,6 +127,18 @@ class ProductController {
             res.send({ error: true, msg: error.message })
         }
     }
+
+    searchProducts = async (req, res) => {
+        try {
+            const {
+                searchTerm
+            } = req.query
+            const products = await Product.find({ name: new RegExp(searchTerm, "i")}).select('-__v').populate('category_id')
+            res.send({ error: false, items: products })
+        } catch (error) {
+            res.send({ error: true, msg: error.message })
+        }
+    }
 }
 
 module.exports = ProductController

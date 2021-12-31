@@ -48,7 +48,8 @@ const {
     updateProductStocks,
     getProduct,
     getProducts,
-    deleteProductImage
+    deleteProductImage,
+    searchProducts
 } = new ProductController();
 
 router.post('/add', auth, uploadS3.array("images", 5), addProduct)
@@ -60,5 +61,5 @@ router.patch('/updateStock/:id', auth, updateProductStocks)
 router.get('/view/:id', getProduct)
 router.get('/list', auth, getProducts)
 router.delete('/delete-image/:key', auth, deleteProductImage)
-
+router.get('/search', searchProducts)
 module.exports = router;
