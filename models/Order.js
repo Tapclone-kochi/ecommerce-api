@@ -70,6 +70,9 @@ const orderSchema = new Schema({
   order_unique: {
     type: String, 
     required: true
+  },
+  paid_at: {
+    type: Date
   }
 },
 { timestamps: true }

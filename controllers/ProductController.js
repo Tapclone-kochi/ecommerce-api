@@ -12,7 +12,8 @@ class ProductController {
             price: req.body.price,
             description: req.body.description,
             category_id: req.body.category_id,
-            images: files
+            images: files,
+            stockLeft: req.body.stockLeft
         }
         try {
             const product = new Product(data)
@@ -122,6 +123,18 @@ class ProductController {
                 res.send({ error: false, msg: 'Deleted Successfully' })
             else
                 res.send({ error: true, msg: 'An error Occured' })
+        } catch (error) {
+            res.send({ error: true, msg: error.message })
+        }
+    }
+
+    searchProducts = async (req, res) => {
+        try {
+            const {
+                searchTerm
+            } = req.query
+            const products = await Product.find({ name: new RegExp(searchTerm, "i")}).select('-__v').populate('category_id')
+            res.send({ error: false, items: products })
         } catch (error) {
             res.send({ error: true, msg: error.message })
         }

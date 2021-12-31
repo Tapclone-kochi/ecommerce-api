@@ -124,7 +124,9 @@ class OrderController {
       const { order_id } = req.body.payload.payment.entity;
       let order = await Order.findOne({ orderID: order_id });
       order.status = "order_placed";
+      order.paid_at = new Date()
       order.markModified("status");
+      order.markModified("paid_at");
 
       await order.save();
 
@@ -135,7 +137,7 @@ class OrderController {
         await product.save();
       }
 
-      telegram.sendOrderPlacedToAdmin()
+      telegram.sendOrderPlacedToAdmin(order.order_unique)
       
       res.send({ error: false, msg: "Payment Verified" });
     } catch (error) {
@@ -176,12 +178,20 @@ class OrderController {
   getOrdersForAdmin = async (req, res) => {
     const {
       status,
-      orderID
+      orderID,
+      fromDate,
+      toDate
     } = req.query
 
     const query = {
       ...(status !== undefined && status !== "" && { status }),
-      ...(orderID !== undefined && orderID !== "" && { order_unique: orderID })
+      ...(orderID !== undefined && orderID !== "" && { order_unique: orderID }),
+      ...(fromDate !== undefined && fromDate !== "" && toDate !== undefined && toDate !== "" && { 
+        $and: [
+          { createdAt: { $gte: new Date(fromDate) } },
+          { createdAt: { $lte: new Date(toDate) } }
+        ]
+       }),
     }
     try {
       const orders = await Order.find(query).sort({ createdAt: -1 });
@@ -201,8 +211,11 @@ class OrderController {
       }
       order.status = "order_dispatched";
       order.trackingNo = req.body.trackingNo;
+      order.delivery_partner_name = req.body.delivery_partner_name
       order.markModified("status");
       order.markModified("trackingNo");
+      order.markModified("delivery_partner_name")
+      
       await order.save();
 
       let user = await User.findById(order.userID)
