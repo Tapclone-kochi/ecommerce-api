@@ -124,7 +124,9 @@ class OrderController {
       const { order_id } = req.body.payload.payment.entity;
       let order = await Order.findOne({ orderID: order_id });
       order.status = "order_placed";
+      order.paid_at = new Date()
       order.markModified("status");
+      order.markModified("paid_at");
 
       await order.save();
 
@@ -176,12 +178,20 @@ class OrderController {
   getOrdersForAdmin = async (req, res) => {
     const {
       status,
-      orderID
+      orderID,
+      fromDate,
+      toDate
     } = req.query
 
     const query = {
       ...(status !== undefined && status !== "" && { status }),
-      ...(orderID !== undefined && orderID !== "" && { order_unique: orderID })
+      ...(orderID !== undefined && orderID !== "" && { order_unique: orderID }),
+      ...(fromDate !== undefined && fromDate !== "" && toDate !== undefined && toDate !== "" && { 
+        $and: [
+          { createdAt: { $gte: new Date(fromDate) } },
+          { createdAt: { $lte: new Date(toDate) } }
+        ]
+       }),
     }
     try {
       const orders = await Order.find(query).sort({ createdAt: -1 });
