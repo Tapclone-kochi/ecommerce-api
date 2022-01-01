@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
-
-    const User = require('../models/User');
+const User = require('../models/User');
+const ResetPassword = require('../models/ResetPassword')
+const ShortUniqueId = require('short-unique-id');
+const sms = require('../helpers/sms')
 
 class AuthController {
     register = async (req, res, next) => {
@@ -86,6 +88,28 @@ class AuthController {
         } catch (error) {
             console.log(error);
             res.send("An error occured");
+        }
+    }
+
+    forgotPassword = async (req, res) => {
+        const { mobile } = req.params
+
+        try {
+            const user = await User.findOne({ mobile: mobile }).select('_id mobile')
+
+            const uid = new ShortUniqueId({ length: 6 })
+
+            const reset = new ResetPassword({
+                userID: user._id,
+                resetCode: uid()
+            })
+
+            await reset.save()
+            console.log(reset);
+            sms.sendResetPasswordSMS(user.mobile, reset.resetCode)
+            res.send({ error: false, msg: "Reset Link SMS sent to mobile. Check your messages" })
+        } catch (error) {
+            res.send({ error: true, msg: "An Error Occured" })
         }
     }
 
