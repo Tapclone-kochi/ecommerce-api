@@ -3,7 +3,7 @@ const User = require('../models/User');
 const ResetPassword = require('../models/ResetPassword')
 const ShortUniqueId = require('short-unique-id');
 const sms = require('../helpers/sms')
-
+const kutt = require('../helpers/kutt')
 class AuthController {
     register = async (req, res, next) => {
         try {
@@ -105,10 +105,12 @@ class AuthController {
             })
 
             await reset.save()
-
-            sms.sendResetPasswordSMS(user.mobile, reset.resetCode)
+            const result = await kutt.shortenLink(reset.resetCode)
+            
+            sms.sendResetPasswordSMS(user.mobile, result.data.link)
             res.send({ error: false, msg: "Reset Link SMS sent to mobile. Check your messages" })
         } catch (error) {
+            console.error(error);
             res.send({ error: true, msg: "An Error Occured" })
         }
     }
