@@ -11,5 +11,11 @@ module.exports.sendDispatchSMS = (number, trackingCode, deliveryProvider, orderU
 }
 
 module.exports.sendResetPasswordSMS = (number, url) => {
-  console.log("Dear Customer, your password reset link is " + url + " . Links are valid for 24 hrs. Regards! NAYANA");
+  const {
+    SMS_AUTHENTIC_KEY,
+    SENDER_ID,
+    RESET_PASS_SMS_TEMPLATE_ID
+  } = process.env
+
+  return axios.get('http://sms.text91msg.com/http-tokenkeyapi.php?authentic-key=' + SMS_AUTHENTIC_KEY + '&senderid=' + SENDER_ID + '&route=1&number=' + number + '&message=Dear Customer, your password reset link is ' + url + ' Links are valid for 24 hrs. Regards! NAYANA&templateid=' + RESET_PASS_SMS_TEMPLATE_ID)
 }
