@@ -10,7 +10,9 @@ const {
     profile,
     loginWithMobile,
     adminLogin,
-    forgotPassword
+    forgotPassword,
+    checkResetPasswordLinkValid,
+    resetPassword
 } = new AuthController()
 
 router.post('/register', register)
@@ -19,5 +21,7 @@ router.post('/loginWithMobile', loginWithMobile)
 router.get('/profile', auth, profile)
 router.post('/admin-login', adminLogin)
 router.post('/forgot-password/:mobile', forgotPassword)
+router.post('/check-reset-link', checkResetPasswordLinkValid)
+router.post('/reset-password', resetPassword)
 
 module.exports = router;
