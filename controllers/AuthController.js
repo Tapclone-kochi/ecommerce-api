@@ -97,6 +97,10 @@ class AuthController {
         try {
             const user = await User.findOne({ mobile: mobile }).select('_id mobile')
 
+            if(!user) {
+                res.send({ error: true, msg: "User not found" })
+                return
+            }
             const uid = new ShortUniqueId({ length: 6 })
 
             const reset = new ResetPassword({
@@ -107,7 +111,7 @@ class AuthController {
             await reset.save()
             const result = await kutt.shortenLink(reset.resetCode)
             
-            sms.sendResetPasswordSMS(user.mobile, result.data.link)
+            await sms.sendResetPasswordSMS(user.mobile, result.data.link);
             res.send({ error: false, msg: "Reset Link SMS sent to mobile. Check your messages" })
         } catch (error) {
             console.error(error);
