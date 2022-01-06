@@ -51,7 +51,7 @@ class OrderController {
       let grandTotal = 0;
 
       cart.products.forEach((el) => {
-        grandTotal += el.productID.price; // Calculate subtotal
+        grandTotal += el.productID.price * el.quantity; // Calculate subtotal
       });
 
       grandTotal += shippingPrice; // Add shipping charge
@@ -92,7 +92,7 @@ class OrderController {
       });
 
       await newOrder.save();
-      await Cart.deleteOne({ userID: req.user._id }); // Delete cart
+
       res.send({
         error: false,
         msg: "Successfully placed the order",
@@ -129,6 +129,7 @@ class OrderController {
       order.markModified("paid_at");
 
       await order.save();
+      await Cart.deleteOne({ userID: order.userID }); // Delete cart
 
       for (let index = 0; index < order.items.length; index++) {
         const el = order.items[index];
