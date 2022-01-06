@@ -139,6 +139,22 @@ class ProductController {
             res.send({ error: true, msg: error.message })
         }
     }
+
+    editProductImage = async (req, res) => {
+            // console.log(req.body)
+
+        try{
+            console.log(req.body,req.file)
+            await s3Helpers.deleteS3Object(req.body.key)
+            let products = await Product.findById(req.body.id)
+            products.images[req.body.index]=req.file
+            // products.markModified("images");
+            await products.save()
+            res.send({ error: false, msg: "product successfully changed" })
+        }catch (error) {
+            res.send({ error: true, msg: error.message })
+        }
+    }
 }
 
 module.exports = ProductController
