@@ -148,7 +148,7 @@ class ProductController {
             products.images[req.body.index] = req.file
             await products.save()
 
-            res.send({ error: false, msg: "product successfully changed" })
+            res.send({ error: false, msg: "Image Updated Successfully" })
         } catch (error) {
             res.send({ error: true, msg: error.message })
         }
