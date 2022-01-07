@@ -100,6 +100,7 @@ class OrderController {
           order_id: razorpayOrder.id,
           amount: razorpayOrder.amount,
           currency: razorpayOrder.currency,
+          order_unique: newOrder.order_unique
         },
       });
     } catch (error) {
