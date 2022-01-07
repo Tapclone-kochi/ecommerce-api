@@ -102,7 +102,7 @@ class ProductController {
 
             res.send({ error: false, product: product })
         } catch (error) {
-            res.send({ error: true, msg: error.message })  
+            res.send({ error: true, msg: error.message })
         }
     }
 
@@ -115,11 +115,11 @@ class ProductController {
         }
     }
 
-    deleteProductImage = async(req, res) => {
+    deleteProductImage = async (req, res) => {
         try {
             let result = await s3Helpers.deleteS3Object(req.params.key)
             console.log(result);
-            if(result)
+            if (result)
                 res.send({ error: false, msg: 'Deleted Successfully' })
             else
                 res.send({ error: true, msg: 'An error Occured' })
@@ -133,8 +133,22 @@ class ProductController {
             const {
                 searchTerm
             } = req.query
-            const products = await Product.find({ name: new RegExp(searchTerm, "i")}).select('-__v').populate('category_id')
+            const products = await Product.find({ name: new RegExp(searchTerm, "i") }).select('-__v').populate('category_id')
             res.send({ error: false, items: products })
+        } catch (error) {
+            res.send({ error: true, msg: error.message })
+        }
+    }
+
+    editProductImage = async (req, res) => {
+        try {
+            s3Helpers.deleteS3Object(req.body.key)
+
+            let products = await Product.findById(req.body.id)
+            products.images[req.body.index] = req.file
+            await products.save()
+
+            res.send({ error: false, msg: "product successfully changed" })
         } catch (error) {
             res.send({ error: true, msg: error.message })
         }
