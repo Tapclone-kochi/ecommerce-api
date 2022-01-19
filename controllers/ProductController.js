@@ -26,7 +26,7 @@ class ProductController {
 
     getProductsByCategoryID = async (req, res) => {
         try {
-            const products = await Product.find({ category_id: req.params.id }).select('-__v').populate('category_id')
+            const products = await Product.find({ category_id: req.params.id, disabled: false }).select('-__v').populate('category_id')
             res.send({ error: false, items: products })
         } catch (error) {
             res.send({ error: true, msg: error.message })
@@ -153,6 +153,40 @@ class ProductController {
             res.send({ error: true, msg: error.message })
         }
     }
+
+    toggleStatus = async (req, res) => {
+        try {
+            let product = await Product.findById(req.body.id)
+            if(!product) {
+                res.send({ error: true, msg: "Product not found" })
+                return
+            }
+            product.disabled = !product.disabled
+            product.save()
+            res.send({ error: false, msg: "Status Updated" })
+        } catch (error) {
+            res.send({ error: true, msg: error.message })
+        }
+    }
+
+    getProductsByCategoryIDForAdmin = async (req, res) => {
+        try {
+            const products = await Product.find({ category_id: req.params.id }).select('-__v').populate('category_id')
+            res.send({ error: false, items: products })
+        } catch (error) {
+            res.send({ error: true, msg: error.message })
+        }
+    }
+
+    getProductsForAdmin = async (req, res) => {
+        try {
+            const products = await Product.find().select('-__v').populate('category_id')
+            res.send({ error: false, items: products })
+        } catch (error) {
+            res.send({ error: true, msg: error.message })
+        }
+    }
+
 }
 
 module.exports = ProductController
