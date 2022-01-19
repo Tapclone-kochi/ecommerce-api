@@ -50,7 +50,10 @@ const {
     getProducts,
     deleteProductImage,
     searchProducts,
-    editProductImage
+    editProductImage,
+    toggleStatus,
+    getProductsByCategoryIDForAdmin,
+    getProductsForAdmin
 } = new ProductController();
 
 router.post('/add', auth, uploadS3.array("images", 5), addProduct)
@@ -64,4 +67,8 @@ router.get('/list', auth, getProducts)
 router.delete('/delete-image/:key', auth, deleteProductImage)
 router.get('/search', searchProducts)
 router.patch('/editImage', auth, uploadS3.single("image", 1), editProductImage)
+router.patch('/toggle-status', auth, toggleStatus)
+router.get('/list-for-admin/:id', getProductsByCategoryIDForAdmin)
+router.get('/list-for-admin', auth, getProductsForAdmin)
+
 module.exports = router;
