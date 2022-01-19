@@ -108,7 +108,7 @@ class ProductController {
 
     getProducts = async (req, res) => {
         try {
-            const products = await Product.find().select('-__v').populate('category_id')
+            const products = await Product.find({ disabled: false }).select('-__v').populate('category_id')
             res.send({ error: false, items: products })
         } catch (error) {
             res.send({ error: true, msg: error.message })
