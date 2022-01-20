@@ -35,7 +35,6 @@ const uploadS3 = multer({
       cb(null, Date.now().toString() + '-' + file.originalname)
     }
   }),
-  limits: { fileSize: 5000000 },
   fileFilter: fileFilter
 });
 
