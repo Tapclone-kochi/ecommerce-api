@@ -23,7 +23,8 @@ class OrderController {
         return;
       }
 
-      const user = await User.findById(req.user._id).select("name mobile state pin address");
+      const { user } = req.body
+
       let data = await Shipping.findOne({
         state_name: user.state,
         delivery_partner_name: req.body.delivery_partner_name,
@@ -86,7 +87,8 @@ class OrderController {
           mobile: user.mobile,
           address: user.address,
           pin: user.pin,
-          state: user.state
+          state: user.state,
+          email: user.email
         },
         order_unique: uid()
       });
