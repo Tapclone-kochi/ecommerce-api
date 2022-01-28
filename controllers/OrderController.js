@@ -9,6 +9,15 @@ const sms = require('../helpers/sms')
 const telegram = require('../helpers/telegram')
 class OrderController {
   createOrder = async (req, res) => {
+    const { user } = req.body
+
+    Object.entries(user).forEach(([key, value]) => {
+      if(!value) {
+        res.send({ error: true, msg: key + " required!!" });
+        return
+      }
+    })
+
     try {
       let cart = await Cart.findOne({ userID: req.user._id }).populate({
         // Get cart
@@ -23,7 +32,6 @@ class OrderController {
         return;
       }
 
-      const user = await User.findById(req.user._id).select("name mobile state pin address");
       let data = await Shipping.findOne({
         state_name: user.state,
         delivery_partner_name: req.body.delivery_partner_name,
@@ -86,7 +94,8 @@ class OrderController {
           mobile: user.mobile,
           address: user.address,
           pin: user.pin,
-          state: user.state
+          state: user.state,
+          email: user.email
         },
         order_unique: uid()
       });

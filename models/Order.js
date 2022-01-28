@@ -65,6 +65,9 @@ const orderSchema = new Schema({
     pin: {
       type: String,
       required: true
+    },
+    email: {
+      type: String
     }
   },
   order_unique: {

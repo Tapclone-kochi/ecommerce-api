@@ -5,9 +5,8 @@ const Cart = require("../models/Cart");
 class ShippingController {
   getShippingInfo = async (req, res) => {
     try {
-      const user = await User.findById(req.user._id).select("state");
       let data = await Shipping.find({
-        state_name: user.state,
+        state_name: req.query.state,
       });
 
       let productCount = await Cart.findOne({ userID: req.user._id });

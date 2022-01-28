@@ -6,6 +6,31 @@ const sms = require('../helpers/sms')
 const kutt = require('../helpers/kutt')
 class AuthController {
     register = async (req, res, next) => {
+        const {
+            name,
+            mobile,
+            password
+        } = req.body
+
+        if(!name) {
+            res.send({ error: true, msg: "Name Required"});
+            return
+        }
+
+        if(!mobile) {
+            res.send({ error: true, msg: "Mobile Required"});
+            return
+        }
+
+        if(!password) {
+            res.send({ error: true, msg: "Password Required"});
+            return
+        }
+
+        if(mobile.length !== 10) {
+            res.send({ error: true, msg: "Mobile No. must be 10 digits"});
+            return
+        }
         try {
             const user = new User(req.body);
 
@@ -23,7 +48,7 @@ class AuthController {
     login = async (req, res, next) => {
         try {
             const user = await User.findOne({ email: req.body.email });
-            if (!user) return res.status(400).send({ error: true, msg: "Invalid email or password"});
+            if (!user) return res.status(400).send({ error: true, msg: "Cannot find specified user"});
 
             const validPassword = await bcrypt.compare(
                 req.body.password,
@@ -54,7 +79,7 @@ class AuthController {
     loginWithMobile = async (req, res, next) => {
         try {
             const user = await User.findOne({ mobile: req.body.mobile });
-            if (!user) return res.status(400).send({ error: true, msg: "Invalid mobile or password"});
+            if (!user) return res.status(400).send({ error: true, msg: "Cannot find specified user"});
 
             const validPassword = await bcrypt.compare(
                 req.body.password,
@@ -74,7 +99,7 @@ class AuthController {
     adminLogin = async (req, res) => {
         try {
             const user = await User.findOne({ email: req.body.email, user_type: 'admin' });
-            if (!user) return res.status(400).send({ error: true, msg: "Invalid mobile or password"});
+            if (!user) return res.status(400).send({ error: true, msg: "Cannot find specified user"});
 
             const validPassword = await bcrypt.compare(
                 req.body.password,
