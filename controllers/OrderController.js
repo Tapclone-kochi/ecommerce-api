@@ -18,8 +18,19 @@ class OrderController {
       }
     })
 
+    let searchQuery = {}
+    if(req.user) {
+      searchQuery = {
+        userID: req.user._id
+      }
+    } else if(req.body.cartID) {
+      searchQuery = {
+        _id: req.body.cartID
+      }
+    }
+
     try {
-      let cart = await Cart.findOne({ userID: req.user._id }).populate({
+      let cart = await Cart.findOne(searchQuery).populate({
         // Get cart
         path: "products",
         populate: {
@@ -36,7 +47,7 @@ class OrderController {
         state_name: user.state,
         delivery_partner_name: req.body.delivery_partner_name,
       });
-      let productCount = await Cart.findOne({ userID: req.user._id });
+      let productCount = await Cart.findOne(searchQuery);
 
       let count = 0;
       let shippingPrice = 0;
@@ -77,7 +88,7 @@ class OrderController {
         // Create order
         currency: "INR",
         amount: grandTotal,
-        receipt: "Receipt #" + req.user._id,
+        receipt: "Receipt",
       });
 
       const uid = new ShortUniqueId({ length: 6 })
@@ -87,7 +98,7 @@ class OrderController {
         delivery_partner_name: req.body.delivery_partner_name,
         totalAmount: grandTotal,
         items: products,
-        userID: req.user._id,
+        userID: req.user ? req.user._id : null,
         orderID: razorpayOrder.id,
         user_details: {
           name: user.name,
@@ -229,7 +240,7 @@ class OrderController {
       
       await order.save();
 
-      let user = await User.findById(order.userID)
+      let user = order.user_details
       sms.sendDispatchSMS(user.mobile, order.trackingNo, order.delivery_partner_name, order.order_unique)
       
       res.send({ error: false, msg: "Order Status changed to dispatched" });

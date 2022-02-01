@@ -9,7 +9,18 @@ class ShippingController {
         state_name: req.query.state,
       });
 
-      let productCount = await Cart.findOne({ userID: req.user._id });
+      let searchQuery = {}
+      if(req.user) {
+        searchQuery = {
+          userID: req.user._id
+        }
+      } else if(req.query.cartID) {
+        searchQuery = {
+          _id: req.query.cartID
+        }
+      }
+  
+      let productCount = await Cart.findOne(searchQuery);
 
       let count = 0;
 
@@ -18,7 +29,6 @@ class ShippingController {
         count = count + item.quantity;
         // console.log(item.quantity);
       }
-      console.log(count);
       data.forEach((el, index) => {
         if (count - 1 >= 1) {
           if (el.state_name === "Kerala") {
@@ -28,7 +38,6 @@ class ShippingController {
           }
         }  
       });
-
       res.send({ error: false, data: data });
     } catch (error) {
       console.error(error);
