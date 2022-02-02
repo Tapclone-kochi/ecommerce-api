@@ -1,6 +1,7 @@
 const router = require('express').Router();
 
 const auth = require('../middleware/auth')
+const guestAuth = require('../middleware/guest-auth')
 
 const OrderController = require('../controllers/OrderController')
 
@@ -13,7 +14,7 @@ const {
   dispatchOrder
 } = new OrderController()
 
-router.post('/create', auth, createOrder);
+router.post('/create', guestAuth, createOrder);
 router.post('/confirm', confirmOrder);
 router.get('/list', auth, getOrders);
 router.get('/detail/:id', auth, getOrder);
