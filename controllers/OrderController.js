@@ -12,7 +12,7 @@ class OrderController {
     const { user } = req.body
 
     Object.entries(user).forEach(([key, value]) => {
-      if(!value) {
+      if(!value && (key !== "email")) {
         res.send({ error: true, msg: key + " required!!" });
         return
       }
