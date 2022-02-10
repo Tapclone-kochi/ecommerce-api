@@ -6,11 +6,11 @@ const mongoose = require("mongoose");
 class CartController {
   addItemInCart = async (req, res) => {
     let searchQuery = {}
-    if(req.user) {
+    if (req.user) {
       searchQuery = {
         userID: req.user._id
       }
-    } else if(req.body.cartID) {
+    } else if (req.body.cartID) {
       searchQuery = {
         _id: req.body.cartID
       }
@@ -18,33 +18,33 @@ class CartController {
 
     try {
       let cart = null
-      if(Object.keys(searchQuery).length)
+      if (Object.keys(searchQuery).length)
         cart = await Cart.findOne(searchQuery)
       let product = await Product.findById(req.body.productID)
 
-      if(product.stockLeft < 1) {
+      if (product.stockLeft < 1) {
         res.send({ error: true, msg: "Out of Stock!!" })
         return
       }
 
-      if(product.stockLeft < req.body.quantity) {
+      if (product.stockLeft < req.body.quantity) {
         res.send({ error: true, msg: "Required Stock is unavailable" })
         return
       }
-      
-      if(!cart) {
+
+      if (!cart) {
         let products = []
 
         products.push(req.body)
-        cart = new Cart({ userID: req.user?req.user._id:null, products: products })
+        cart = new Cart({ userID: req.user ? req.user._id : null, products: products })
         await cart.save()
 
         res.send({ error: false, msg: "Successfully added to cart", cartID: cart._id })
         return
-      } else { 
+      } else {
         let product = cart.products.find(item => item.productID.equals(mongoose.Types.ObjectId(req.body.productID)))
 
-        if(product) {
+        if (product) {
           res.send({ error: true, msg: "Product Already in Cart" })
           return
         }
@@ -52,7 +52,7 @@ class CartController {
         cart.products.push(req.body)
         cart.markModified('products')
         await cart.save()
-        
+
         res.send({ error: false, msg: "Successfully added to cart", cartID: cart._id })
       }
     } catch (error) {
@@ -63,7 +63,7 @@ class CartController {
 
   deleteItemInCart = async (req, res) => {
     let query = {}
-    if(req.user) {
+    if (req.user) {
       query = {
         userID: req.user._id
       }
@@ -85,11 +85,11 @@ class CartController {
 
   getCart = async (req, res) => {
     let query = {}
-    if(req.user) {
+    if (req.user) {
       query = {
         userID: req.user._id
       }
-    } else if(req.query.cartID) {
+    } else if (req.query.cartID) {
       query = {
         _id: req.query.cartID
       }
@@ -113,11 +113,11 @@ class CartController {
 
   clearCart = async (req, res) => {
     let query = {}
-    if(req.user) {
+    if (req.user) {
       query = {
         userID: req.user._id
       }
-    } else if(req.query.cartID) {
+    } else if (req.query.cartID) {
       query = {
         _id: req.query.cartID
       }
@@ -135,11 +135,11 @@ class CartController {
 
   updateCartProductQuantity = async (req, res) => {
     let query = {}
-    if(req.user) {
+    if (req.user) {
       query = {
         userID: req.user._id
       }
-    } else if(req.body.cartID) {
+    } else if (req.body.cartID) {
       query = {
         _id: req.body.cartID
       }
@@ -150,6 +150,14 @@ class CartController {
 
     try {
       let newQuantity = req.body.data
+
+      for (let i = 0; i < newQuantity.length; i++) {
+        const el = newQuantity[i];
+        if (parseInt(el) === 0) {
+          res.send({ error: true, msg: "Quantity cannot be 0 !!" })
+          return
+        }
+      }
 
       let cart = await Cart.findOne(query)
 
@@ -166,11 +174,11 @@ class CartController {
 
   getCartTotalAmount = async (req, res) => {
     let query = {}
-    if(req.user) {
+    if (req.user) {
       query = {
         userID: req.user._id
       }
-    } else if(req.query.cartID) {
+    } else if (req.query.cartID) {
       query = {
         _id: req.query.cartID
       }
