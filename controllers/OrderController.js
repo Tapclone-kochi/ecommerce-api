@@ -43,6 +43,18 @@ class OrderController {
         return;
       }
 
+      for (let i = 0; i < cart.products.length; i++) {
+        const el = cart.products[i];
+        if(el.productID.stockLeft === 0) {
+          res.send({ error: true, msg: el.productID.name + " required stock is unavailable" });
+          return;
+        }
+        if(el.quantity > el.productID.stockLeft) {
+          res.send({ error: true, msg: el.productID.name + " required stock is unavailable" });
+          return;
+        }
+      }
+
       let data = await Shipping.findOne({
         state_name: user.state,
         delivery_partner_name: req.body.delivery_partner_name,
