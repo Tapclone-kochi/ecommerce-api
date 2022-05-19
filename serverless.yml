@@ -1,9 +1,11 @@
-service: expressInAWSDemo #Name of your App
+org: jgeorge97
+console: true
+service: ecommerce-api-serverless #Name of your App
 
 provider:
   name: aws
   runtime: nodejs14.x # Node JS version
-  memorySize: 128
+  memorySize: 512
   timeout: 10
   stage: production
   region: ap-south-1 # AWS region

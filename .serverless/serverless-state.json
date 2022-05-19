@@ -1,13 +1,13 @@
 {
   "service": {
-    "service": "expressInAWSDemo",
+    "service": "ecommerce-api-serverless",
     "serviceObject": {
-      "name": "expressInAWSDemo"
+      "name": "ecommerce-api-serverless"
     },
     "provider": {
       "name": "aws",
       "runtime": "nodejs14.x",
-      "memorySize": 128,
+      "memorySize": 512,
       "timeout": 10,
       "stage": "production",
       "region": "ap-south-1",
@@ -88,7 +88,7 @@
           "ApiLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/expressInAWSDemo-production-api"
+              "LogGroupName": "/aws/lambda/ecommerce-api-serverless-production-api"
             }
           },
           "IamRoleLambdaExecution": {
@@ -116,7 +116,7 @@
                     "Fn::Join": [
                       "-",
                       [
-                        "expressInAWSDemo",
+                        "ecommerce-api-serverless",
                         "production",
                         "lambda"
                       ]
@@ -133,7 +133,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/expressInAWSDemo-production*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/ecommerce-api-serverless-production*:*"
                           }
                         ]
                       },
@@ -144,7 +144,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/expressInAWSDemo-production*:*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/ecommerce-api-serverless-production*:*:*"
                           }
                         ]
                       }
@@ -157,7 +157,7 @@
                 "Fn::Join": [
                   "-",
                   [
-                    "expressInAWSDemo",
+                    "ecommerce-api-serverless",
                     "production",
                     {
                       "Ref": "AWS::Region"
@@ -168,6 +168,18 @@
               }
             }
           },
+          "SlsConsoleOtelExtension": {
+            "Type": "AWS::Lambda::LayerVersion",
+            "Properties": {
+              "Content": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/ecommerce-api-serverless/production/code-artifacts/sls-otel.0.2.21.zip"
+              },
+              "LayerName": "sls-console-otel-extension-0-2-21"
+            }
+          },
           "ApiLambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
@@ -175,38 +187,55 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/expressInAWSDemo/production/1652786036513-2022-05-17T11:13:56.513Z/expressInAWSDemo.zip"
+                "S3Key": "serverless/ecommerce-api-serverless/production/1652939614346-2022-05-19T05:53:34.346Z/ecommerce-api-serverless.zip"
               },
               "Handler": "lambda.universal",
               "Runtime": "nodejs14.x",
-              "FunctionName": "expressInAWSDemo-production-api",
-              "MemorySize": 128,
+              "FunctionName": "ecommerce-api-serverless-production-api",
+              "MemorySize": 512,
               "Timeout": 10,
               "Role": {
                 "Fn::GetAtt": [
                   "IamRoleLambdaExecution",
                   "Arn"
                 ]
-              }
+              },
+              "Environment": {
+                "Variables": {
+                  "SLS_OTEL_REPORT_REQUEST_HEADERS": "serverless_token=e08e152b-d412-4903-b917-ca54138d6e40",
+                  "SLS_OTEL_REPORT_METRICS_URL": "https://core.serverless.com/ingestion/kinesis/v1/metrics",
+                  "SLS_OTEL_REPORT_TRACES_URL": "https://core.serverless.com/ingestion/kinesis/v1/traces",
+                  "OTEL_RESOURCE_ATTRIBUTES": "sls_service_name=ecommerce-api-serverless,sls_stage=production,sls_org_id=302b3dc3-e694-435d-ba54-3aced6de1f0c",
+                  "AWS_LAMBDA_EXEC_WRAPPER": "/opt/otel-extension/internal/exec-wrapper.sh",
+                  "SLS_OTEL_REPORT_LOGS_URL": "https://core.serverless.com/ingestion/kinesis/v1/logs",
+                  "SLS_OTEL_REPORT_REQUEST_RESPONSE_URL": "https://core.serverless.com/ingestion/kinesis/v1/request-response",
+                  "SLS_OTEL_USER_SETTINGS": "{}"
+                }
+              },
+              "Layers": [
+                {
+                  "Ref": "SlsConsoleOtelExtension"
+                }
+              ]
             },
             "DependsOn": [
               "ApiLogGroup"
             ]
           },
-          "ApiLambdaVersionN9dcRPYg4XHrVjfa8MMVygvTskLdeVlFnpjZt15evs": {
+          "ApiLambdaVersionDrIOyZ42z3fCZQIoKWBkkLaF6kNsjI2kJET93BPt208": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "e3iRjrbrbzeDMy9WVHdJYjuIu2DkhXolfFPIY7FIspU="
+              "CodeSha256": "wc6dZVHm6maVWf45qVZj8HwH/F74dGMBdUw0PJVxSkA="
             }
           },
           "ApiGatewayRestApi": {
             "Type": "AWS::ApiGateway::RestApi",
             "Properties": {
-              "Name": "production-expressInAWSDemo",
+              "Name": "production-ecommerce-api-serverless",
               "EndpointConfiguration": {
                 "Types": [
                   "EDGE"
@@ -418,7 +447,7 @@
               "ApiLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1652786006288": {
+          "ApiGatewayDeployment1652939588623": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -477,16 +506,16 @@
               "Ref": "ServerlessDeploymentBucket"
             },
             "Export": {
-              "Name": "sls-expressInAWSDemo-production-ServerlessDeploymentBucketName"
+              "Name": "sls-ecommerce-api-serverless-production-ServerlessDeploymentBucketName"
             }
           },
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersionN9dcRPYg4XHrVjfa8MMVygvTskLdeVlFnpjZt15evs"
+              "Ref": "ApiLambdaVersionDrIOyZ42z3fCZQIoKWBkkLaF6kNsjI2kJET93BPt208"
             },
             "Export": {
-              "Name": "sls-expressInAWSDemo-production-ApiLambdaFunctionQualifiedArn"
+              "Name": "sls-ecommerce-api-serverless-production-ApiLambdaFunctionQualifiedArn"
             }
           },
           "ServiceEndpoint": {
@@ -512,7 +541,7 @@
               ]
             },
             "Export": {
-              "Name": "sls-expressInAWSDemo-production-ServiceEndpoint"
+              "Name": "sls-ecommerce-api-serverless-production-ServiceEndpoint"
             }
           }
         }
@@ -653,19 +682,21 @@
             }
           }
         ],
-        "name": "expressInAWSDemo-production-api",
+        "name": "ecommerce-api-serverless-production-api",
         "package": {},
-        "memory": 128,
+        "memory": 512,
         "timeout": 10,
         "runtime": "nodejs14.x",
         "vpc": {},
-        "versionLogicalId": "ApiLambdaVersionN9dcRPYg4XHrVjfa8MMVygvTskLdeVlFnpjZt15evs"
+        "versionLogicalId": "ApiLambdaVersionDrIOyZ42z3fCZQIoKWBkkLaF6kNsjI2kJET93BPt208"
       }
     },
     "configValidationMode": "warn",
     "serviceFilename": "serverless.yml",
     "initialServerlessConfig": {
-      "service": "expressInAWSDemo",
+      "org": "jgeorge97",
+      "console": true,
+      "service": "ecommerce-api-serverless",
       "provider": {
         "$ref": "$[\"service\"][\"provider\"]"
       },
@@ -673,12 +704,23 @@
         "$ref": "$[\"service\"][\"functions\"]"
       }
     },
+    "org": "jgeorge97",
     "layers": {},
-    "isDashboardMonitoringPreconfigured": false,
-    "artifact": "/home/tapclone/Desktop/work/nayana/ecommerce-api/.serverless/expressInAWSDemo.zip"
+    "isDashboardMonitoringPreconfigured": true,
+    "isDashboardAppPreconfigured": false,
+    "artifact": "/home/george/tapclone/ecommerce-api/.serverless/ecommerce-api-serverless.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/expressInAWSDemo/production/1652786036513-2022-05-17T11:13:56.513Z",
-    "artifact": "expressInAWSDemo.zip"
+    "artifactDirectoryName": "serverless/ecommerce-api-serverless/production/1652939614346-2022-05-19T05:53:34.346Z",
+    "artifact": "ecommerce-api-serverless.zip"
+  },
+  "console": {
+    "schemaVersion": "1",
+    "otelIngestionToken": "e08e152b-d412-4903-b917-ca54138d6e40",
+    "extensionLayerVersionPostfix": "0.2.21",
+    "service": "ecommerce-api-serverless",
+    "stage": "production",
+    "region": "ap-south-1",
+    "orgId": "302b3dc3-e694-435d-ba54-3aced6de1f0c"
   }
 }
