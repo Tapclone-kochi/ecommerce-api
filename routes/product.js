@@ -7,9 +7,9 @@ require('dotenv').config()
 const ProductController = require('../controllers/ProductController');
 
 const multer  = require('multer');
-const multerS3 = require('multer-s3');
+const multerS3 = require('multer-sharp-s3');
 const AWS = require('aws-sdk');
-
+ 
 const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_KEY
@@ -27,13 +27,18 @@ const uploadS3 = multer({
   storage: multerS3({
     s3: s3,
     acl: 'public-read',
-    bucket: process.env.AWS_BUCKET_NAME,
+    Bucket: process.env.AWS_BUCKET_NAME,
+    cacheControl: 'max-age=604800',
     metadata: (req, file, cb) => {
       cb(null, {fieldName: file.fieldname})
     },
     key: (req, file, cb) => {
       cb(null, Date.now().toString() + '-' + file.originalname)
-    }
+    },
+    resize: {
+      width: 260,
+      height: 340,
+    },
   }),
   fileFilter: fileFilter
 });

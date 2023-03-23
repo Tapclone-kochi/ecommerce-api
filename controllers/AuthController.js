@@ -97,6 +97,8 @@ class AuthController {
     }
 
     adminLogin = async (req, res) => {
+        console.log("kjkjkj");
+        console.log(req.body,"kjjk");
         try {
             const user = await User.findOne({ email: req.body.email, user_type: 'admin' });
             if (!user) return res.status(400).send({ error: true, msg: "Cannot find specified user"});

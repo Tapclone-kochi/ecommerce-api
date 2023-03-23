@@ -9,7 +9,7 @@ class ProductController {
         });
         const data = {
             name: req.body.name,
-            price: req.body.price,
+            price: req.body.price, 
             description: req.body.description,
             category_id: req.body.category_id,
             images: files,
