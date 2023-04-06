@@ -10,7 +10,7 @@ const server = http.createServer(app);
 
 mongoose
   .connect(process.env.MONGO_DB_URL, {
-    useNewUrlParser: true,
+    useNewUrlParser: true,  
     useUnifiedTopology: true,
     autoIndex: true,
     keepAlive: true,
