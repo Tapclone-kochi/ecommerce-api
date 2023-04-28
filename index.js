@@ -14,7 +14,7 @@ mongoose
     useUnifiedTopology: true,
     autoIndex: true,
     keepAlive: true,
-  })
+  })   
   .then(() => console.log('Database Connected Successfully'))
   .catch((error) => console.log('ERROR : Database Connection Failed', error));
 

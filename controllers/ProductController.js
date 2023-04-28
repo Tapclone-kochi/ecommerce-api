@@ -5,7 +5,10 @@ class ProductController {
     addProduct = async (req, res) => {
         let files = []
         req.files.forEach(file => {
-            files.push(file)
+        const obj={
+            location:file.Location
+        }
+            files.push(obj)
         });
         const data = {
             name: req.body.name,

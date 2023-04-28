@@ -101,6 +101,7 @@ class AuthController {
         console.log(req.body,"kjjk");
         try {
             const user = await User.findOne({ email: req.body.email, user_type: 'admin' });
+            console.log(user,"dkjc");
             if (!user) return res.status(400).send({ error: true, msg: "Cannot find specified user"});
 
             const validPassword = await bcrypt.compare(
@@ -109,8 +110,8 @@ class AuthController {
             );
             if (!validPassword)
                 return res.status(400).send({ error: true, msg: "Invalid password"});
-
             const token = user.generateAuthToken();
+            console.log(token);
             res.send(token);
         } catch (error) {
             console.log(error);
