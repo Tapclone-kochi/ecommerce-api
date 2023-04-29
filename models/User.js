@@ -10,7 +10,8 @@ const userSchema = new Schema({
     email: {
         type: String,
         unique: true,
-        index: true
+        index: true,
+        required:false,
     },
     mobile: {
         type: String,
