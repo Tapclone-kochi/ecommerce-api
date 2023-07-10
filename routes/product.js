@@ -37,10 +37,6 @@ const uploadS3 = multer({
     key: (req, file, cb) => {
       cb(null, Date.now().toString() + '-' + file.originalname)
     },
-    resize: {
-      width: 260,
-      height: 340,
-    },
   }),
   fileFilter: fileFilter
 });
@@ -62,7 +58,7 @@ const {
     getProductsForAdmin
 } = new ProductController();
 
-router.post('/add', uploadS3.array("images", 5), addProduct)
+router.post('/add', console.log("ccDone"),uploadS3.array("images", 5), addProduct)
 router.delete('/delete/:id', auth, deleteProduct)
 router.patch('/edit/:id', auth, updateProduct)
 router.get('/list/:id', getProductsByCategoryID)
