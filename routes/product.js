@@ -18,9 +18,7 @@ const s3 = new AWS.S3({
 const fileFilter = (req, file, cb) => {
     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
         cb(null, true)
-    
     } else {
-
         cb(null, false)
     }
 }
@@ -36,6 +34,10 @@ const uploadS3 = multer({
     },
     key: (req, file, cb) => {
       cb(null, Date.now().toString() + '-' + file.originalname)
+    },
+    resize: {
+      width: 260,
+      height: 340,
     },
   }),
   fileFilter: fileFilter
@@ -58,7 +60,7 @@ const {
     getProductsForAdmin
 } = new ProductController();
 
-router.post('/add', addProduct)
+router.post('/add', auth, uploadS3.array("images", 5), addProduct)
 router.delete('/delete/:id', auth, deleteProduct)
 router.patch('/edit/:id', auth, updateProduct)
 router.get('/list/:id', getProductsByCategoryID)
