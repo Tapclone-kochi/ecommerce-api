@@ -58,7 +58,7 @@ const {
     getProductsForAdmin
 } = new ProductController();
 
-router.post('/add',uploadS3.array("images", 5), addProduct)
+router.post('/add', addProduct)
 router.delete('/delete/:id', auth, deleteProduct)
 router.patch('/edit/:id', auth, updateProduct)
 router.get('/list/:id', getProductsByCategoryID)
